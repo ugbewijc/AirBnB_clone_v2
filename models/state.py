@@ -1,16 +1,20 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
-
-from models.base_model import BaseModel, Base
-from model import storage
+"""
+State Module for HBNB project
+"""
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from models.base_model import BaseModel, Base
 from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String
+import models
+from models.city import City
 import shlex
 
 
 class State(BaseModel, Base):
-    """ State class """
+    """
+    State Class
+    """
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
     cities = relationship("City", cascade='all, delete, delete-orphan',
@@ -18,7 +22,7 @@ class State(BaseModel, Base):
 
     @property
     def cities(self):
-        var = storage.all()
+        var = models.storage.all()
         lista = []
         result = []
         for key in var:

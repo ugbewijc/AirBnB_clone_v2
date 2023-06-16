@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """ Defines DBStorage Engine """
-
 from os import getenv
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import (create_engine)
@@ -37,22 +36,22 @@ class DBStorage:
         """
         returns a dictionary of __object
         """
-        dictionary = {}
+        dic = {}
         if cls:
             if type(cls) is str:
                 cls = eval(cls)
             query = self.__session.query(cls)
             for elem in query:
                 key = "{}.{}".format(type(elem).__name__, elem.id)
-                dictionary[key] = elem
+                dic[key] = elem
         else:
             lista = [State, City, User, Place, Review, Amenity]
-            for xlass in lista:
-                query = self.__session.query(xlass)
+            for clase in lista:
+                query = self.__session.query(clase)
                 for elem in query:
                     key = "{}.{}".format(type(elem).__name__, elem.id)
-                    dictionary[key] = elem
-        return (dictionary)
+                    dic[key] = elem
+        return (dic)
 
     def new(self, obj):
         """
@@ -81,3 +80,9 @@ class DBStorage:
         sec = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sec)
         self.__session = Session()
+
+    def close(self):
+        """
+        Close session
+        """
+        self.__session.close()

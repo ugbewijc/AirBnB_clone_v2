@@ -10,9 +10,14 @@ Routes:
     /number/<n>: display "n is a number" only if n is an integer
     /number_template/<n>: display a HTML page only if n is an integer
     /number_odd_or_even/<n>: display a HTML page only if n is an integer
+    /states_list: display HTML page with list of all State objects in DBStorage
+    /cities_by_states: display HTML page with list of all states and related
+                      cities
+    /states: display HTML page with a list of all State objects.
+    /states/<id>: display HTML page displaying the given state with <id>.
 """
 
-
+from models import storage
 from flask import Flask, render_template
 app = Flask(__name__)
 
@@ -74,6 +79,52 @@ def number_odd_or_even(n):
     Display a HTML page only if n is an integer
     """
     return render_template("6-number_odd_or_even.html", num=n)
+
+
+@app.route("/states_list", strict_slashes=False)
+def states_list():
+    """
+    Displays HTML page with a list of all State objects in DBStorage.
+    Sort States by name.
+    """
+    states = storage.all("State")
+    return render_template("7-states_list.html", states=states)
+
+
+@app.route("/cities_by_states", strict_slashes=False)
+def cities_by_states():
+    """
+    Displays HTML page with  list of all states and related cities.
+    Sort States/Cities by name.
+    """
+    states = storage.all("State")
+    return render_template("8-cities_by_states.html", states=states)
+
+
+@app.route("/states", strict_slashes=False)
+def states():
+    """Displays an HTML page with a list of all States.
+    States are sorted by name.
+    """
+    states = storage.all("State")
+    return render_template("9-states.html", state=states)
+
+
+@app.route("/states/<id>", strict_slashes=False)
+def states_id(id):
+    """Displays an HTML page with info about <id>, if it exists."""
+    for state in storage.all("State").values():
+        if state.id == id:
+            return render_template("9-states.html", state=state)
+    return render_template("9-states.html")
+
+
+@app.teardown_appcontext
+def teardown(exc):
+    """
+    Close SQLAlchemy session
+    """
+    storage.close()
 
 
 if __name__ == "__main__":
